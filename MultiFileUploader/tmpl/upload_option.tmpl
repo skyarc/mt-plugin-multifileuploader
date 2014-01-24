@@ -1,0 +1,133 @@
+    <mtapp:widget
+    id="upload-option-widget"
+    class="upload-option-widget"
+    label="<__trans phrase="Upload Option">">
+    <mt:if name="enable_destination">
+        <mtapp:setting
+            id="site_path"
+            label_class="top-label"
+            label="<__trans phrase="Upload Destination">"
+            hint="<__trans phrase="You can upload the file to a subdirectory in the selected path. The subdirectory will be created if it does not exist.">"
+            show_hint="1">
+            <mt:var name="object_type" value="page">
+            <script type="text/javascript" src="<$mt:var name="static_uri"$>js/tc/client.js?v=<mt:var name="mt_version_id" escape="url">"></script>
+            <script type="text/javascript">
+                /* <![CDATA[ */
+                    MT.App.selectedCategoryList = [];
+                    MT.App.objectType = '<mt:var name="object_type" escape="js">';
+
+                    App.singletonConstructor =
+                    MT.App = new Class( MT.App, {
+                        
+                        initComponents: function() {
+                            arguments.callee.applySuper( this, arguments );
+
+                            this.categorySelector = this.addComponent( new this.constructor.CategorySelector( "folder-selector", "categorySelectorList" ) );
+                            var cats = MT.App.categoryList;
+                            if ( cats ) {
+                                /* cache all the categories */
+                                this.catCache = new Cache( cats.length + 50 );
+                                for ( var i = 0; i < cats.length; i++ )
+                                    this.catCache.setItem( 'cat:'+cats[ i ].id, cats[ i ] );
+                            }
+
+                            this.catList = { redraw: this.getIndirectMethod( "redrawFolderList" ) };
+                            /* we don't need the modal mask here */
+                            this.modalMask = { element: DOM.getElement( "folder-selector" ), show: Function.stub, hide: Function.stub };
+                            this.form = DOM.getElement( "setting_form" );
+                        },
+
+
+                        redrawFolderList: function() {
+                            var item = this.catCache.getItem( "cat:" + MT.App.selectedCategoryList );
+                            var path = [];
+                            var cat;
+                            for ( var i = 1, len = item.path.length; i < len; i++ ) {
+                                cat = this.catCache.getItem( "cat:" + item.path[ i ] );
+                                if ( cat ) 
+                                    path.push( cat.basename );
+                            }
+                            path.push( item.basename );
+                            /* no leading slash */
+                            path[ 0 ] = path[ 0 ].replace( /^\//, '' );
+                            DOM.getElement( "extra_path" ).value = path.join( '' );
+                        },
+
+
+                        eventClick: function( event ) {
+                            var command = this.getMouseEventCommand( event );
+                            switch( command ) {
+
+                                case "openFolderSelector":
+                                    this.categorySelector.open( event.commandElement );
+                                    break;
+                                
+                            }
+                            return arguments.callee.applySuper( this, arguments );
+                        }
+                        
+                    } );
+                /* ]]> */
+            </script>
+
+            <select name="site_path" id="site_path" onchange="setExtraPath(this)">
+                <option value="1">&#60;<__trans phrase="Site Root">&#62;</option>
+            <mt:if name="enable_archive_paths">
+                <option value="0"<mt:if name="archive_path"> selected="selected"</mt:if>>&#60;<__trans phrase="Archive Root">&#62;</option>
+            </mt:if>
+            <mt:if name="extra_paths">
+                <mt:loop name="extra_paths">
+                <option value="<mt:if name="enable_archive_paths">0<mt:else>1</mt:if>" middle_path="<mt:var name="path" escape="html">"<mt:if name="selected"> selected="selected"</mt:if>><mt:var name="label" escape="html"></option>
+                </mt:loop>
+            </mt:if>
+            </select>
+            / <input type="text" name="extra_path" id="extra_path" class="extra-path" value="<mt:var name="extra_path" escape="html">" style="width:<MTIf name="dialog">50%<MTElse>60%</MTIf>;" />
+            &nbsp;<a href="javascript:void(0);" mt:command="open-folder-selector"><__trans phrase="Choose Folder"></a>
+        </mtapp:setting>
+    </mt:if>
+
+    <mt:if name="enable_destination">
+        <mt:var name="container_type" value="folder">
+        <mt:include name="include/category_selector.tmpl">
+    </mt:if>
+
+    <mtapp:setting
+        label_class="top-label"
+        id="overwrite"
+        label="<__trans phrase="Overwrite">"
+        hint="<__trans phrase="Please choose processing when the file of the same name exists.">"
+        show_hint="1">
+<select id="overwrite" name="overwrite">
+  <option value="1" selected="selected" ><__trans phrase="overwrite_yes"></option>
+  <option value="0"><__trans phrase="Skip the file"></option>
+</select>
+    </mtapp:setting>
+
+    <mtapp:setting
+        id="size"
+        label_class="top-label"
+        label="<__trans phrase="Images size">"
+        hint="<__trans phrase="Please input size">"
+        show_hint="1">
+<select id="resize" name="resize">
+  <option value="width"><__trans phrase="width"></option>
+  <option value="height"><__trans phrase="height"></option>
+  <!--option value="ratio"><__trans phrase="resize"></option-->
+</select>
+<input type="text" <mt:unless name="mfu_limit_as_fixed_value">name="size" id="size"</mt:unless> style="width:5.5em;" <mt:if name='mfu_use_limit_value'>value="<mt:getvar name='mfu_limitation_size'>"</mt:if> <mt:if name="mfu_limit_as_fixed_value">disabled="disabled" class="disabled" </mt:if>/> <__trans phrase="pixel">
+  
+  <mt:if name="mfu_limit_as_fixed_value">
+  <input type="hidden" name="size" id="size" value="<mt:getvar name='mfu_limitation_size'>" style="width:<MTIf name="dialog">50%<MTElse>25%</MTIf>;" />
+  </mt:if>
+    </mtapp:setting>
+
+    <mtapp:setting
+        id="file_tag"
+        label_class="top-label"
+        label="<__trans phrase="Tags">"
+        hint="<__trans phrase="Please input tag">"
+        show_hint="1">
+        <input type="text" name="file_tag" id="file_tag">
+    </mtapp:setting>
+
+</mtapp:widget>

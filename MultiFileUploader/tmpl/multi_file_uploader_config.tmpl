@@ -1,0 +1,48 @@
+  <mtapp:setting 
+     id="mfu_image_resize_mode"
+	 label="<__trans phrase='Image resize mode'>"
+     hint="<__trans phrase='Behavior of image resize within upload.'>"
+   show_hint="1"
+  >
+  <select name="mfu_image_resize_mode" id="mfu_image_resize_mode">
+<mt:unless name="is_system">
+  <option value="0" <mt:if name=mfu_image_resize_mode eq="0">selected="selected" </mt:if>><__trans phrase='Follow [_1] settings' params='<TMPL_VAR NAME="PARENT_OBJECT_NAME">'> <mt:if name='parent_limitation_mode'>(<mt:if name=parent_limitation_mode eq="1"><__trans phrase='None'></mt:if><mt:if name=parent_limitation_mode eq="2"><__trans phrase='As initial value'></mt:if><mt:if name=parent_limitation_mode eq="3"><__trans phrase='As fixed value'></mt:if>)</mt:if> </option>
+</mt:unless>
+  <option value="1" <mt:if name=mfu_image_resize_mode eq="1">selected="selected" </mt:if>><__trans phrase='None'></option>
+  <option value="2" <mt:if name=mfu_image_resize_mode eq="2">selected="selected" </mt:if>><__trans phrase='As initial value'></option>
+  <option value="3" <mt:if name=mfu_image_resize_mode eq="3">selected="selected" </mt:if>><__trans phrase='As fixed value'></option>
+  </select>
+  
+  </mtapp:setting>
+
+
+  <mtapp:setting 
+     id="mfu_limitation_size"
+	 label="<__trans phrase='Maximum image size'>"
+     hint="<__trans phrase='Maximum size of uploaded image (height or width).'>"
+   show_hint="1"
+  >
+  <input type="text" name="mfu_limitation_size" id="mfu_limitation_size" value="<mt:getvar name='mfu_limitation_size'>" style="width:5em" />
+  <__trans phrase='pixels'>
+  
+  </mtapp:setting>
+
+
+<mt:if name="available_mfu_replace_upload">
+
+  <mtapp:setting 
+     id="mfu_replace_upload"
+	 label="<__trans phrase='Replace upload menu'>"
+     hint="<__trans phrase='Replace "[_1]" in the menu with multi file uploader.' params='<mt:var name="mfu_menu_name">'>"
+   show_hint="1"
+  >
+
+  <select name="mfu_replace_upload" id="mfu_replace_upload">
+  <option value="0" <mt:if name=mfu_replace_upload eq="0">selected="selected" </mt:if>><__trans phrase='Disabled'></option>
+  <option value="1" <mt:if name=mfu_replace_upload eq="1">selected="selected" </mt:if>><__trans phrase='Enabled'></option>
+  </select>
+
+  </mtapp:setting>
+
+</mt:if>
+
